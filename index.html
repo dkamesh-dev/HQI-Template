@@ -1,249 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Quick Copy Templates by Category</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f7f8fa; margin: 0; padding: 0; }
-    .container { max-width: 860px; margin: 2rem auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #d1d5db; padding: 2rem; }
-    h1 { text-align: center; color: #3b3b3b; }
-    .category-list { margin: 1.5rem 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;}
-    .category-list a { background: #e1eafe; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; color: #2b4ca7; font-weight: 500; transition: background 0.2s; }
-    .category-list a:hover { background: #d0dafc; }
-    .template-section { margin-top: 2rem; border-top: 1px solid #eee; padding-top: 2rem; }
-    .template-section:not(:last-child) { margin-bottom: 2.5rem;}
-    h2 { color: #3752ab; margin-top: 0;}
-    .template-box { background: #f5f6fa; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem; font-family: 'Fira Mono', 'Consolas', monospace; font-size: 1rem; white-space: pre-wrap;}
-    .copy-btn { background: #3752ab; color: #fff; border: none; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 1rem; margin-bottom: 0.5rem; transition: background 0.2s;}
-    .copy-btn.copied { background: #5cb85c; }
-    .add-template { background: #eee; padding: 1rem; border-radius: 8px; margin-top: 2rem;}
-    .footer { text-align: center; margin-top: 2rem; color: #888; font-size: 0.95rem;}
-    @media (max-width: 600px) {
-      .container { padding: 1rem;}
-      .category-list { flex-direction: column; align-items: center;}
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="container">
-  <h1>Quick Copy Templates by Category</h1>
-  <p>Welcome! This site provides categorized templates for common workflows. Each category contains clear headings and ready-to-use templates.</p>
-  <ul class="category-list">
-    <li><a href="#hpm-visit-template">🏠 HPM Visit</a></li>
-    <li><a href="#hpm-visit-notes">🗒️ HPM VISIT NOTES</a></li>
-    <li><a href="#lwo-template">🛠️/🧰 LWO</a></li>
-    <li><a href="#maintenance-vendor-template">🧹/🌴/🏊‍♂️ Maintenance Vendor</a></li>
-    <li><a href="#follow-up-closing-template">🔄⏳ Follow-up/Closing</a></li>
-    <li><a href="#photo-auditing">📸🖼️ Photo Auditing</a></li>
-    <li><a href="#no-action-closing-template">🚫 No Action Closing</a></li>
-    <li><a href="#side-conversation-notes">💬 Side Conversation Notes</a></li>
-    <li><a href="#maintenance-vendor-notes">📝 Maintenance Vendor notes</a></li>
-    <li><a href="#incident-report-template">🚨 Incident Report Template</a></li>
-  </ul>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md text-center">
+    <h1 class="text-2xl font-semibold mb-4">Upload Document</h1>
+    <p class="text-gray-600 mb-6">Upload your document below. Once you click OK, it will automatically extract data and send it to Slack.</p>
+    
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" id="fileInput" name="file" accept=".pdf,.docx,.txt" required
+        class="block w-full border border-gray-300 rounded-lg mb-4 p-2" />
+      <button type="submit"
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">OK</button>
+    </form>
 
-  <div id="hpm-visit-template" class="template-section">
-    <h2>🏠 HPM Visit Template</h2>
-    <button class="copy-btn" data-template="hpmVisit">Copy</button>
-    <div class="template-box" id="hpmVisit">
-Flip state:
-HPM name:
-Visit created Date:
-Last visit completed on:
-last visit Link:
-Last visit completed by:
-Notes:
-    </div>
+    <p id="status" class="mt-4 text-sm text-gray-700"></p>
   </div>
 
-  <div id="hpm-visit-notes" class="template-section">
-    <h2>🗒️ HPM VISIT NOTES</h2>
-    <button class="copy-btn" data-template="hpmVisitNotes">Copy</button>
-    <div class="template-box" id="hpmVisitNotes">
-Flip State:
-DOM:
-No Of Time issue reported:
-Issue:
-    </div>
-  </div>
+  <script>
+    const form = document.getElementById('uploadForm');
+    const status = document.getElementById('status');
 
-  <div id="lwo-template" class="template-section">
-    <h2>🛠️/🧰 LWO Template</h2>
-    <button class="copy-btn" data-template="lwo">Copy</button>
-    <div class="template-box" id="lwo">
-Flip state:
-Last WO completed related to this issue -
-Photos related to the feedback -
-No Of Time issue reported:
-Notes - Action & Reason for Action -
-    </div>
-  </div>
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return alert('Please select a file to upload.');
 
-  <div id="maintenance-vendor-template" class="template-section">
-    <h2>🧹/🌴/🏊‍♂️ Maintenance Vendor Template</h2>
-    <button class="copy-btn" data-template="maintenanceVendor">Copy</button>
-    <div class="template-box" id="maintenanceVendor">
-Flip State:
-Last Landscaping visit date and if photos related to feedback:
-Last Cleaning visit date and if photos related to feedback:
-Last Pool visit date and if photos related to feedback:
-No of Times Issue reported:
-Notes - Action & Reason for Action:
-Maintenance Vendor notes:
-    </div>
-  </div>
+      const formData = new FormData();
+      formData.append('uploaded_file', file);
 
-  <div id="follow-up-closing-template" class="template-section">
-    <h2>🔄⏳ Follow-up / Closing Template</h2>
-    <button class="copy-btn" data-template="followUpClosing">Copy</button>
-    <div class="template-box" id="followUpClosing">
-Flip State:
-Issue Reported On: [Insert Date]
-Current Status: [Pending / In Progress / Awaiting Vendor / Completed]
-Follow-Up Action Required:
-    </div>
-  </div>
+      status.textContent = 'Uploading... Please wait.';
 
-  <div id="photo-auditing" class="template-section">
-    <h2>📸🖼️ Photo Auditing</h2>
-    <button class="copy-btn" data-template="photoAuditing">Copy</button>
-    <div class="template-box" id="photoAuditing">
-Flip state:
-Notes - Action & Reason for Action -
-    </div>
-  </div>
+      try {
+        // Replace with your Gumloop public form endpoint
+        const response = await fetch('https://www.gumloop.com/form/2Yur8g7izH4PDcYgy1Nv9q', {
+          method: 'POST',
+          body: formData
+        });
 
-  <div id="no-action-closing-template" class="template-section">
-    <h2>🚫 No Action Closing Template</h2>
-    <button class="copy-btn" data-template="noActionClosing">Copy</button>
-    <div class="template-box" id="noActionClosing">
-Flip state:
-Notes - Action & Reason for Action -
-    </div>
-  </div>
-
-  <!-- New Categories Below -->
-
-  <div id="side-conversation-notes" class="template-section">
-    <h2>💬 Side Conversation Notes</h2>
-    <button class="copy-btn" data-template="sideConversationNotes">Copy</button>
-    <div class="template-box" id="sideConversationNotes">
-Flip State:
-DOM:
-Last Landscaping /Cleaning/ Pool /visit date and if photos related to feedback:
-No of Times Issue reported:
-Last HPM visit completed on : 
-Notes - Action & Reason for Action:
-    </div>
-  </div>
-
-  <div id="maintenance-vendor-notes" class="template-section">
-    <h2>📝 Maintenance Vendor notes</h2>
-    <button class="copy-btn" data-template="maintenanceVendorNotes">Copy</button>
-    <div class="template-box" id="maintenanceVendorNotes">
-Hello Team, We received feedback from the customer regarding [ISSUE]. Upon checking, you already have a scheduled visit for this property on [DATE]. Kindly review this issue during your visit, and let us know if you need any assistance. Please ensure to upload the relevant photos once the issue is addressed.
-    </div>
-  </div>
-
-  <div id="incident-report-template" class="template-section">
-    <h2>🚨 Incident Report Template</h2>
-    <button class="copy-btn" data-template="incidentReport">Copy</button>
-    <div class="template-box" id="incidentReport">
-Flip State:
-DOM:
-No of Times Issue reported:
-Incident report Link: 
-Notes - Action & Reason for Action:
-    </div>
-  </div>
-
-  <div class="add-template">
-    <h3>💡 Add Your Own Templates</h3>
-    <ol>
-      <li>Fork this repository.</li>
-      <li>Add new categories or templates following the structure above.</li>
-      <li>Submit a pull request for review!</li>
-    </ol>
-  </div>
-
-  <div class="footer">
-    &copy; 2025 Quick Copy Templates by Category | Gopalmani95
-  </div>
-</div>
-<script>
-const templateMap = {
-  hpmVisit: 
-`Flip state:
-HPM name:
-Visit created Date:
-Last visit completed on:
-last visit Link:
-Last visit completed by:
-Notes:
-
-Flip State:
-DOM:
-No Of Time issue reported:
-Issue:
-Visit Notes: We have received [Customer/Vendor] feedback regarding [Issue]. Upon review, please conduct an inspection of the property and verify the reported concern. If any work is required, kindly create a Work Order and coordinate with the appropriate vendor to address it. Please share confirmation once the inspection is completed.`,
-  lwo: 
-`Flip state:
-Last WO completed related to this issue -
-Photos related to the feedback -
-No Of Time issue reported:
-Notes - Action & Reason for Action -`,
-  maintenanceVendor: `Flip State:
-Last Landscaping visit date and if photos related to feedback:
-Last Cleaning visit date and if photos related to feedback:
-No of Times Issue reported:
-Notes - Action & Reason for Action:
-Maintenance Vendor notes:`,
-  followUpClosing: `Flip State:
-Issue Reported On: [Insert Date]
-Current Status: [Pending / In Progress / Awaiting Vendor / Completed]
-Follow-Up Action Required:
-
-Last Landscaping /Cleaning/ Pool visit date and if photos related to feedback:
-No of Times Issue reported:
-Notes - Action & Reason for Action:
-Action Taken:`,
-  photoAuditing: `Flip state:
-Notes - Action & Reason for Action -`,
-  noActionClosing: `Flip state:
-Hello Team, We received feedback from the customer regarding [ISSUE]. Upon checking, you already have a scheduled visit for this property on [DATE]. Kindly review this issue during your visit, and let us know if you need any assistance. Please ensure to upload the relevant photos once the issue is addressed.`,
-
-  // New templates below
-  sideConversationNotes: `
-Flip State:
-DOM:
-Last Landscaping /Cleaning/ Pool visit date and if photos related to feedback:
-No of Times Issue reported:
-Notes - Action & Reason for Action:`,
-  maintenanceVendorNotes: `Hello Team, We received feedback from the customer regarding [ISSUE]. Upon checking, you already have a scheduled visit for this property on [DATE]. Kindly review this issue during your visit, and let us know if you need any assistance. Please ensure to upload the relevant photos once the issue is addressed.`,
-  hpmVisitNotes: `HPM VISIT NOTES:
-Flip State:
-DOM:
-No Of Time issue reported:
-Issue:`,
-  incidentReport: `Flip State:
-DOM:
-No of Times Issue reported:
-Incident report Link: 
-Notes - Action & Reason for Action:`
-};
-document.querySelectorAll('.copy-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    const templateKey = btn.getAttribute('data-template');
-    navigator.clipboard.writeText(templateMap[templateKey]).then(() => {
-      btn.classList.add('copied');
-      btn.textContent = 'Copied!';
-      setTimeout(() => {
-        btn.classList.remove('copied');
-        btn.textContent = 'Copy';
-      }, 1200);
+        if (response.ok) {
+          status.textContent = '✅ File uploaded successfully! Data extraction started.';
+        } else {
+          status.textContent = '❌ Upload failed. Please try again.';
+        }
+      } catch (error) {
+        console.error(error);
+        status.textContent = '⚠️ Something went wrong.';
+      }
     });
-  });
-});
-</script>
+  </script>
 </body>
 </html>
+
+  
+
+   
+   
+ 
+
+  
+
+
+
